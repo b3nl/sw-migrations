@@ -1,0 +1,23 @@
+{
+    "name": "b3nl/sw-migrations",
+    "description": "Uses the shopware interface to enable custom database migrations.",
+    "require": {
+        "PHP": ">= 5.4.0"
+    },
+    "require-dev": {
+        "squizlabs/php_codesniffer": "2.*"
+    },
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Bjoern Lange",
+            "email": "github@b3nl.de"
+        }
+    ],
+    "minimum-stability": "dev",
+    "autoload": {
+        "psr-4": {
+            "SWMigrations\\": "src/"
+        }
+    }
+}
