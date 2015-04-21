@@ -17,8 +17,8 @@ $longopts  = array(
     'shoppath:'
 );
 
-$shoppath = $dbConfig['shoppath'];
 $dbConfig = getopt('', $longopts);
+$shoppath = $dbConfig['shoppath'];
 
 if (empty($dbConfig)) {
     if (file_exists($shoppath . '/config.php')) {
@@ -71,8 +71,9 @@ try {
 
 require $shoppath . '/engine/Shopware/Components/Migrations/AbstractMigration.php';
 require $shoppath . '/engine/Shopware/Components/Migrations/Manager.php';
+require __DIR__ . '/../src/Components/Migrations/Manager.php';
 
-$migrationManger = new Shopware\Components\Migrations\Manager($conn, $dbConfig["migrationpath"]);
+$migrationManger = new SWMigrations\Components\Migrations\Manager($conn, $dbConfig["migrationpath"]);
 
 if ($suffix = $dbConfig["tablesuffix"]) {
     $migrationManger->settablesuffix($suffix);
