@@ -2,23 +2,21 @@
 <?php
 /*
  * ./ApplyDeltas.php --username="root" --password="example" --host="localhost" --dbname="example-db" \
- *  --tablesuffix="deployment" --migrationpath=""
+ *  --tablesuffix="deployment" --migrationpath="custom/migrations" --shoppath="./shopware"
  */
 
 date_default_timezone_set('UTC');
 
-$longopts  = array(
+$longopts = [
     "username:",
     "password:",
     "host:",
-    "dbname:",
-    'tablesuffix:',
-    'migrationpath:',
-    'shoppath:'
-);
+    "dbname:"
+];
 
+$deployConfig = getopt('', ['tablesuffix::', 'shoppath:', 'migrationpath:']);
 $dbConfig = getopt('', $longopts);
-$shoppath = $dbConfig['shoppath'];
+$shoppath = $deployConfig['shoppath'];
 
 if (empty($dbConfig)) {
     if (file_exists($shoppath . '/config.php')) {
@@ -36,10 +34,10 @@ if (!isset($dbConfig['host']) || empty($dbConfig['host'])) {
 
 $password = isset($dbConfig['password']) ? $dbConfig['password'] : '';
 
-$connectionSettings = array(
+$connectionSettings = [
     'host=' . $dbConfig['host'],
     'dbname=' . $dbConfig['dbname'],
-);
+];
 
 if (!empty($dbConfig['socket'])) {
     $connectionSettings[] = 'unix_socket=' . $dbConfig['socket'];
@@ -73,10 +71,10 @@ require $shoppath . '/engine/Shopware/Components/Migrations/AbstractMigration.ph
 require $shoppath . '/engine/Shopware/Components/Migrations/Manager.php';
 require __DIR__ . '/../src/Components/Migrations/Manager.php';
 
-$migrationManger = new SWMigrations\Components\Migrations\Manager($conn, $dbConfig["migrationpath"]);
+$migrationManger = new SWMigrations\Components\Migrations\Manager($conn, $deployConfig["migrationpath"]);
 
-if ($suffix = $dbConfig["tablesuffix"]) {
-    $migrationManger->settablesuffix($suffix);
+if ($suffix = $deployConfig["tablesuffix"]) {
+    $migrationManger->setTableSuffix($suffix);
 } // if
 
 $migrationManger->run(\Shopware\Components\Migrations\AbstractMigration::MODUS_INSTALL);
