@@ -2,6 +2,7 @@
 namespace SWMigrations\Components\Migrations;
 
 use Shopware\Components\Migrations\Manager as OriginalManager;
+use Shopware\Components\Migrations\AbstractMigration;
 
 /**
  * Enables you to use custom migrations.
