@@ -32,7 +32,7 @@ class Manager extends OriginalManager
             return parent::apply($migration, $modus);
         } // if
 
-        $sql = 'REPLACE s_schema_version_' . $suffix . ' (version, start_date, name) VALUES (:version, :date, :name)';
+        $sql = 'REPLACE `s_schema_version_' . $suffix . '` (version, start_date, name) VALUES (:version, :date, :name)';
         $stmt = $this->connection->prepare($sql);
         $stmt->execute([
             ':version' => $migration->getVersion(),
@@ -48,7 +48,7 @@ class Manager extends OriginalManager
                 $this->connection->exec($sql);
             }
         } catch (\Exception $e) {
-            $updateVersionSql = 'UPDATE s_schema_version_' . $suffix . ' SET error_msg = :msg WHERE version = :version';
+            $updateVersionSql = 'UPDATE `s_schema_version_' . $suffix . '` SET error_msg = :msg WHERE version = :version';
             $stmt = $this->connection->prepare($updateVersionSql);
             $stmt->execute([
                 ':version' => $migration->getVersion(),
@@ -57,7 +57,7 @@ class Manager extends OriginalManager
             throw new \Exception("Could not apply migration: " . $e->getMessage());
         }
 
-        $sql = 'UPDATE s_schema_version_' . $suffix . ' SET complete_date = :date WHERE version = :version';
+        $sql = 'UPDATE `s_schema_version_' . $suffix . '` SET complete_date = :date WHERE version = :version';
         $stmt = $this->connection->prepare($sql);
         $stmt->execute([
             ':version' => $migration->getVersion(),
@@ -98,8 +98,8 @@ class Manager extends OriginalManager
             return parent::getCurrentVersion();
         } // if
 
-        $sql = 'SELECT version FROM s_schema_version_' . $suffix .
-            ' WHERE complete_date IS NOT NULL ORDER BY version DESC';
+        $sql = 'SELECT version FROM `s_schema_version_' . $suffix .'` 
+                WHERE complete_date IS NOT NULL ORDER BY version DESC';
 
         $currentVersion = (int)$this->connection->query($sql)->fetchColumn();
 
