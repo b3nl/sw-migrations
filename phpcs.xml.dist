@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<ruleset name="sw-migrations">
+    <config name="testVersion" value="7.0" />
+
+    <rule ref="./vendor/bestit/php_codesniffer/src/Standards/BestIt/ruleset.xml">
+        <exclude name="BestIt.Formatting.OpenTag.OpenTagNotFirstStatement" />
+        <exclude name="SlevomatCodingStandard.TypeHints.DeclareStrictTypes.DeclareStrictTypesMissing" />
+    </rule>
+
+    <file>./build/</file>
+    <file>./src/</file>
+</ruleset>

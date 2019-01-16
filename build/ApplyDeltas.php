@@ -1,5 +1,8 @@
 #!/usr/bin/env php
 <?php
+
+use Shopware\Components\Migrations\AbstractMigration;
+
 /*
  * ./ApplyDeltas.php --username="root" --password="example" --host="localhost" --dbname="example-db" \
  *  --tablesuffix="deployment" --migrationpath="custom/migrations" --shoppath="./shopware" [ --mode=(install|update) ]
@@ -8,10 +11,10 @@
 date_default_timezone_set('UTC');
 
 $longopts = [
-    "username:",
-    "password:",
-    "host:",
-    "dbname:"
+    'username:',
+    'password:',
+    'host:',
+    'dbname:'
 ];
 
 $deployConfig = getopt('', ['tablesuffix::', 'shoppath:', 'migrationpath:']);
@@ -61,7 +64,6 @@ try {
 
     // Reset sql_mode "STRICT_TRANS_TABLES" that will be default in MySQL 5.6
     $conn->exec('SET @@session.sql_mode = ""');
-
 } catch (PDOException $e) {
     echo 'Could not connect to database: ' . $e->getMessage();
     exit(1);
@@ -71,19 +73,17 @@ require $shopPath . '/engine/Shopware/Components/Migrations/AbstractMigration.ph
 require $shopPath . '/engine/Shopware/Components/Migrations/Manager.php';
 require __DIR__ . '/../src/Components/Migrations/Manager.php';
 
-$modeArg = getopt('', array('mode:'));
+$modeArg = getopt('', ['mode:']);
 if (!isset($modeArg['mode']) || $modeArg['mode'] == 'install') {
-    $mode = \Shopware\Components\Migrations\AbstractMigration::MODUS_INSTALL;
+    $mode = AbstractMigration::MODUS_INSTALL;
 } else {
-    $mode = \Shopware\Components\Migrations\AbstractMigration::MODUS_UPDATE;
+    $mode = AbstractMigration::MODUS_UPDATE;
 }
 
-$migrationManger = new SWMigrations\Components\Migrations\Manager($conn, $deployConfig["migrationpath"]);
+$migrationManger = new SWMigrations\Components\Migrations\Manager($conn, $deployConfig['migrationpath']);
 
-if ($suffix = $deployConfig["tablesuffix"]) {
+if ($suffix = $deployConfig['tablesuffix']) {
     $migrationManger->setTableSuffix($suffix);
 } // if
 
 $migrationManger->run($mode);
-
-exit(0);
