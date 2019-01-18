@@ -33,7 +33,7 @@ class Manager extends OriginalManager
      *
      * @return void
      */
-    public function apply(AbstractMigration $migration, string $modus = AbstractMigration::MODUS_INSTALL)
+    public function apply(AbstractMigration $migration, $modus = AbstractMigration::MODUS_INSTALL)
     {
         if (!$suffix = $this->getTableSuffix()) {
             return parent::apply($migration, $modus);
