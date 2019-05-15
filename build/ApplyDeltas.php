@@ -21,11 +21,26 @@ $deployConfig = getopt('', ['tablesuffix::', 'shoppath:', 'migrationpath:']);
 $dbConfig = getopt('', $longopts);
 $shopPath = $deployConfig['shoppath'];
 
+$autoloadFile = $shopPath . DIRECTORY_SEPARATOR . 'app/autoload.php';
+require_once $autoloadFile;
+
+if (empty($dbConfig)) {
+    // Load new env structure
+    $dbConfig = array_filter([
+        'dbname' => getenv('DB_DATABASE'),
+        'host' => getenv('DB_HOST'),
+        'password' => getenv('DB_PASSWORD'),
+        'port' => getenv('DB_PORT'),
+        'username' => getenv('DB_USERNAME')
+    ]);
+}
+
 if (empty($dbConfig)) {
     if (file_exists($shopPath . '/config.php')) {
         $config = require $shopPath . '/config.php';
     } else {
-        die('Could not find shopware config');
+        echo 'Could not find shopware config.' . PHP_EOL;
+        exit(1);
     }
 
     $dbConfig = $config['db'];
@@ -65,25 +80,23 @@ try {
     // Reset sql_mode "STRICT_TRANS_TABLES" that will be default in MySQL 5.6
     $conn->exec('SET @@session.sql_mode = ""');
 } catch (PDOException $e) {
-    echo 'Could not connect to database: ' . $e->getMessage();
-    exit(1);
+    echo 'Could not connect to database: ' . $e->getMessage() . '.' . PHP_EOL;
+    exit(2);
 }
 
-require $shopPath . '/engine/Shopware/Components/Migrations/AbstractMigration.php';
-require $shopPath . '/engine/Shopware/Components/Migrations/Manager.php';
 require __DIR__ . '/../src/Components/Migrations/Manager.php';
 
 $modeArg = getopt('', ['mode:']);
-if (!isset($modeArg['mode']) || $modeArg['mode'] == 'install') {
-    $mode = AbstractMigration::MODUS_INSTALL;
-} else {
-    $mode = AbstractMigration::MODUS_UPDATE;
-}
-
 $migrationManger = new SWMigrations\Components\Migrations\Manager($conn, $deployConfig['migrationpath']);
 
 if ($suffix = $deployConfig['tablesuffix']) {
     $migrationManger->setTableSuffix($suffix);
 } // if
 
-$migrationManger->run($mode);
+$migrationManger->run(
+    (!isset($modeArg['mode']) || $modeArg['mode'] == 'install')
+        ? AbstractMigration::MODUS_INSTALL
+        : AbstractMigration::MODUS_UPDATE
+);
+
+exit(0);

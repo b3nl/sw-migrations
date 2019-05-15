@@ -2,7 +2,8 @@
     "name": "b3nl/sw-migrations",
     "description": "Uses the shopware interface to enable custom database migrations.",
     "require": {
-        "PHP": ">= 7.0.0"
+        "PHP": ">= 7.0.0",
+        "ext-pdo": "*"
     },
     "require-dev": {
         "bestit/php_codesniffer": "^1.2"
